@@ -1,0 +1,15 @@
+[sources.nginx_log]
+type = "docker_logs"
+include_containers = ["prometheus-nginx-"]
+
+[sinks.emit_syslog]
+inputs = ["nginx_log"]
+type = "console"
+encoding.codec = "json"
+
+[sinks.quickwit_logs]
+type = "http"
+inputs = ["nginx_log"]
+encoding.codec = "json"
+framing.method = "newline_delimited"
+uri = "http://quickwit:7280/api/v1/nginx-log/ingest"
